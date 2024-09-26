@@ -7,7 +7,7 @@ import useToastListener from "../toaster/ToastListenerHook";
 
 
 interface Props {
-    items: Status[];
+    value: Status;
   }
 
 const StatusItem = (props: Props) => {
@@ -50,44 +50,37 @@ const StatusItem = (props: Props) => {
         
     return (
         <>
-        {props.items.map((item: Status, index: number) => (
-            <div
-              key={index}
-              className="row mb-3 mx-0 px-0 border rounded bg-white"
-            >
-              <div className="col bg-light mx-0 px-0">
-                <div className="container px-0">
-                  <div className="row mx-0 px-0">
-                    <div className="col-auto p-3">
-                      <img
-                        src={item.user.imageUrl}
-                        className="img-fluid"
-                        width="80"
-                        alt="Posting user"
-                      />
-                    </div>
-                    <div className="col">
-                      <h2>
-                        <b>
-                          {item.user.firstName} {item.user.lastName}
-                        </b>{" "}
-                        -{" "}
-                        <Link
-                          to={item.user.alias}
-                          onClick={(event) => navigateToUser(event)}
-                        >
-                          {item.user.alias}
-                        </Link>
-                      </h2>
-                      {item.formattedDate}
-                      <br />
-                      <Post status={item} />
-                    </div>
-                  </div>
+          <div className="col bg-light mx-0 px-0">
+            <div className="container px-0">
+              <div className="row mx-0 px-0">
+                <div className="col-auto p-3">
+                  <img
+                    src={props.value.user.imageUrl}
+                    className="img-fluid"
+                    width="80"
+                    alt="Posting user"
+                  />
+                </div>
+                <div className="col">
+                  <h2>
+                    <b>
+                      {props.value.user.firstName} {props.value.user.lastName}
+                    </b>{" "}
+                    -{" "}
+                    <Link
+                      to={props.value.user.alias}
+                      onClick={(event) => navigateToUser(event)}
+                    >
+                      {props.value.user.alias}
+                    </Link>
+                  </h2>
+                  {props.value.formattedDate}
+                  <br />
+                  <Post status={props.value} />
                 </div>
               </div>
             </div>
-          ))}
+          </div>
         </>
     )
 }
