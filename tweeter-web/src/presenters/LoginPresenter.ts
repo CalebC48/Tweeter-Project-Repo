@@ -25,31 +25,31 @@ export class LoginPresenter {
     return this._view;
   }
 
-  checkSubmitButtonStatus = (alias: string, password: string): boolean => {
+  public checkSubmitButtonStatus(alias: string, password: string): boolean {
     return !alias || !password;
-  };
+  }
 
-  handleLoginOnEnter = (
+  public handleLoginOnEnter(
     event: React.KeyboardEvent<HTMLElement>,
     alias: string,
     password: string,
     rememberMe: boolean,
     originalUrl: string | undefined
-  ) => {
+  ) {
     if (
       event.key === "Enter" &&
       !this.checkSubmitButtonStatus(alias, password)
     ) {
       this.doLogin(alias, password, rememberMe, originalUrl);
     }
-  };
+  }
 
-  doLogin = async (
+  public async doLogin(
     alias: string,
     password: string,
     rememberMe: boolean,
     originalUrl: string | undefined
-  ) => {
+  ) {
     try {
       const [user, authToken] = await this.authService.login(alias, password);
 
@@ -65,5 +65,5 @@ export class LoginPresenter {
         `Failed to log user in because of exception: ${error}`
       );
     }
-  };
+  }
 }
