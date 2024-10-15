@@ -127,7 +127,7 @@ export class RegisterPresenter extends Presenter<RegisterView> {
     imageFileExtension: string,
     rememberMe: boolean
   ) {
-    try {
+    this.doFailureReportingOperation(async () => {
       const [user, authToken] = await this.authService.register(
         firstName,
         lastName,
@@ -139,10 +139,6 @@ export class RegisterPresenter extends Presenter<RegisterView> {
 
       this.view.updateUserInfo(user, user, authToken, rememberMe);
       this.view.navigate("/");
-    } catch (error) {
-      this.view.displayErrorMessage(
-        `Failed to register user because of exception: ${error}`
-      );
-    }
+    }, "register user");
   }
 }

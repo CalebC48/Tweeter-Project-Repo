@@ -45,7 +45,7 @@ export class LoginPresenter extends Presenter<LoginView> {
     rememberMe: boolean,
     originalUrl: string | undefined
   ) {
-    try {
+    this.doFailureReportingOperation(async () => {
       const [user, authToken] = await this.authService.login(alias, password);
 
       this.view.updateUserInfo(user, user, authToken, rememberMe);
@@ -55,10 +55,6 @@ export class LoginPresenter extends Presenter<LoginView> {
       } else {
         this.view.navigate("/");
       }
-    } catch (error) {
-      this.view.displayErrorMessage(
-        `Failed to log user in because of exception: ${error}`
-      );
-    }
+    }, "log user in");
   }
 }

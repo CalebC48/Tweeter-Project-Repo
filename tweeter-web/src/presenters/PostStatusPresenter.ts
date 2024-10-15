@@ -22,7 +22,7 @@ export class PostStatusPresenter extends Presenter<PostStatusView> {
   ) {
     event.preventDefault();
 
-    try {
+    this.doFailureReportingOperation(async () => {
       this.view.displayInfoMessage("Posting status...", 0);
 
       const status = new Status(post, currentUser!, Date.now());
@@ -31,11 +31,7 @@ export class PostStatusPresenter extends Presenter<PostStatusView> {
 
       this.view.setPost("");
       this.view.displayInfoMessage("Status posted!", 2000);
-    } catch (error) {
-      this.view.displayErrorMessage(
-        `Failed to post the status because of exception: ${error}`
-      );
-    }
+    }, "post the status");
 
     this.view.clearLastInfoMessage();
   }
