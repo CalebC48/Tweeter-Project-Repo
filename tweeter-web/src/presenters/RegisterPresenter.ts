@@ -1,6 +1,6 @@
 import { Buffer } from "buffer";
 import { ChangeEvent } from "react";
-import { User, AuthToken, FakeData } from "tweeter-shared";
+import { User, AuthToken } from "tweeter-shared";
 import { AuthenticationService } from "../model/service/AuthenticationService";
 
 export interface RegisterView {

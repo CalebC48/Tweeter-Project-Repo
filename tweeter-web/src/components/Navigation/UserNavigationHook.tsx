@@ -5,7 +5,7 @@ import {
 } from "../../presenters/UserNavigationPresenter";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
-import { AuthToken, FakeData, User } from "tweeter-shared";
+import { AuthToken, User } from "tweeter-shared";
 
 interface UserNavigation {
   navigateToUser: (event: React.MouseEvent) => Promise<void>;
