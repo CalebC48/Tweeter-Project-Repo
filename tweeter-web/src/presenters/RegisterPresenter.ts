@@ -2,9 +2,9 @@ import { Buffer } from "buffer";
 import { ChangeEvent } from "react";
 import { User, AuthToken } from "tweeter-shared";
 import { AuthenticationService } from "../model/service/AuthenticationService";
+import { View, Presenter } from "./Presenter";
 
-export interface RegisterView {
-  displayErrorMessage: (message: string) => void;
+export interface RegisterView extends View {
   updateUserInfo: (
     currentUser: User,
     displayedUser: User | null,
@@ -17,12 +17,11 @@ export interface RegisterView {
   setImageFileExtension: (extension: string) => void;
 }
 
-export class RegisterPresenter {
-  private _view: RegisterView;
+export class RegisterPresenter extends Presenter<RegisterView> {
   private authService: AuthenticationService;
 
   public constructor(view: RegisterView) {
-    this._view = view;
+    super(view);
     this.authService = new AuthenticationService();
   }
 
@@ -85,7 +84,7 @@ export class RegisterPresenter {
 
   public handleImageFile(file: File | undefined) {
     if (file) {
-      this._view.setImageUrl(URL.createObjectURL(file));
+      this.view.setImageUrl(URL.createObjectURL(file));
 
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -100,18 +99,18 @@ export class RegisterPresenter {
           "base64"
         );
 
-        this._view.setImageBytes(bytes);
+        this.view.setImageBytes(bytes);
       };
       reader.readAsDataURL(file);
 
       // Set image file extension (and move to a separate method)
       const fileExtension = this.getFileExtension(file);
       if (fileExtension) {
-        this._view.setImageFileExtension(fileExtension);
+        this.view.setImageFileExtension(fileExtension);
       }
     } else {
-      this._view.setImageUrl("");
-      this._view.setImageBytes(new Uint8Array());
+      this.view.setImageUrl("");
+      this.view.setImageBytes(new Uint8Array());
     }
   }
 
@@ -138,10 +137,10 @@ export class RegisterPresenter {
         imageFileExtension
       );
 
-      this._view.updateUserInfo(user, user, authToken, rememberMe);
-      this._view.navigate("/");
+      this.view.updateUserInfo(user, user, authToken, rememberMe);
+      this.view.navigate("/");
     } catch (error) {
-      this._view.displayErrorMessage(
+      this.view.displayErrorMessage(
         `Failed to register user because of exception: ${error}`
       );
     }

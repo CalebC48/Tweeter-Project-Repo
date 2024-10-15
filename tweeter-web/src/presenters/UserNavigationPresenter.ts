@@ -1,17 +1,17 @@
 import { AuthToken, User } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
+import { View, Presenter } from "./Presenter";
 
-export interface UserNavigationView {
+export interface UserNavigationView extends View {
   displayErrorMessage: (message: string) => void;
   setDisplayedUser: (user: User) => void;
 }
 
-export class UserNavigationPresenter {
-  private _view: UserNavigationView;
+export class UserNavigationPresenter extends Presenter<UserNavigationView> {
   private userService: UserService;
 
   public constructor(view: UserNavigationView) {
-    this._view = view;
+    super(view);
     this.userService = new UserService();
   }
 
@@ -29,13 +29,13 @@ export class UserNavigationPresenter {
 
       if (!!user) {
         if (currentUser!.equals(user)) {
-          this._view.setDisplayedUser(currentUser!);
+          this.view.setDisplayedUser(currentUser!);
         } else {
-          this._view.setDisplayedUser(user);
+          this.view.setDisplayedUser(user);
         }
       }
     } catch (error) {
-      this._view.displayErrorMessage(
+      this.view.displayErrorMessage(
         `Failed to get user because of exception: ${error}`
       );
     }

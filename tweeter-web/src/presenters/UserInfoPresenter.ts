@@ -1,25 +1,20 @@
 import { AuthToken, User } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
+import { View, Presenter } from "./Presenter";
 
-export interface UserInfoView {
-  displayErrorMessage: (message: string) => void;
+export interface UserInfoView extends View {
   displayInfoMessage: (message: string, duration: number) => void;
   setIsFollower: (isFollower: boolean) => void;
   setFollowerCount: (count: number) => void;
   setFolloweeCount: (count: number) => void;
 }
 
-export class UserInfoPresenter {
-  private _view: UserInfoView;
+export class UserInfoPresenter extends Presenter<UserInfoView> {
   private userService: UserService;
 
   public constructor(view: UserInfoView) {
-    this._view = view;
+    super(view);
     this.userService = new UserService();
-  }
-
-  protected get view(): UserInfoView {
-    return this._view;
   }
 
   setIsFollowerStatus = async (
@@ -75,7 +70,7 @@ export class UserInfoPresenter {
     displayedUser: User
   ): Promise<void> => {
     try {
-      this._view.displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
+      this.view.displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
 
       const [followerCount, followeeCount] = await this.userService.follow(
         authToken!,
@@ -97,7 +92,7 @@ export class UserInfoPresenter {
     displayedUser: User
   ): Promise<void> => {
     try {
-      this._view.displayInfoMessage(`Unfollowing ${displayedUser!.name}...`, 0);
+      this.view.displayInfoMessage(`Unfollowing ${displayedUser!.name}...`, 0);
 
       const [followerCount, followeeCount] = await this.userService.unfollow(
         authToken!,
