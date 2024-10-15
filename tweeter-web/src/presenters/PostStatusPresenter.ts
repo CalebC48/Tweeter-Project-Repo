@@ -1,10 +1,8 @@
 import { User, AuthToken, Status } from "tweeter-shared";
-import { AuthenticationService } from "../model/service/AuthenticationService";
 import { StatusService } from "../model/service/StatusService";
-import { View, Presenter } from "./Presenter";
+import { Presenter, MessageView } from "./Presenter";
 
-export interface PostStatusView extends View {
-  displayInfoMessage: (message: string, duration: number) => void;
+export interface PostStatusView extends MessageView {
   setPost: (post: string) => void;
 }
 
@@ -38,5 +36,7 @@ export class PostStatusPresenter extends Presenter<PostStatusView> {
         `Failed to post the status because of exception: ${error}`
       );
     }
+
+    this.view.clearLastInfoMessage();
   }
 }

@@ -5,7 +5,7 @@ export interface UserItemView extends View {
   addItems: (newItems: User[]) => void;
 }
 
-export abstract class UserItemPresenter extends Presenter {
+export abstract class UserItemPresenter extends Presenter<UserItemView> {
   private _hasMoreItems = true;
   private _lastItem: User | null = null;
 

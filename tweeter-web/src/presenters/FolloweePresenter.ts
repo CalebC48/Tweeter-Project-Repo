@@ -24,7 +24,7 @@ export class FolloweePresenter extends UserItemPresenter {
 
       this.hasMoreItems = hasMore;
       this.lastItem = newItems[newItems.length - 1];
-      this._view.addItems(newItems);
+      this.view.addItems(newItems);
     } catch (error) {
       this.view.displayErrorMessage(
         `Failed to load followees because of exception: ${error}`

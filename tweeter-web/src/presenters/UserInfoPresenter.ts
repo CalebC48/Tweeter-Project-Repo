@@ -1,9 +1,8 @@
 import { AuthToken, User } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
-import { View, Presenter } from "./Presenter";
+import { Presenter, MessageView } from "./Presenter";
 
-export interface UserInfoView extends View {
-  displayInfoMessage: (message: string, duration: number) => void;
+export interface UserInfoView extends MessageView {
   setIsFollower: (isFollower: boolean) => void;
   setFollowerCount: (count: number) => void;
   setFolloweeCount: (count: number) => void;
@@ -85,6 +84,8 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
         `Failed to follow user because of exception: ${error}`
       );
     }
+
+    this.view.clearLastInfoMessage();
   };
 
   unfollowDisplayedUser = async (
@@ -107,5 +108,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
         `Failed to unfollow user because of exception: ${error}`
       );
     }
+
+    this.view.clearLastInfoMessage();
   };
 }
