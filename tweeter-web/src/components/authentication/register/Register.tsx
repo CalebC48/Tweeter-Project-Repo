@@ -1,13 +1,15 @@
 import "./Register.css";
 import "bootstrap/dist/css/bootstrap.css";
 import useUserInfo from "../../userInfo/UserInfoHook";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
-import { AuthToken, FakeData, User } from "tweeter-shared";
-import { Buffer } from "buffer";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AuthenticatinFields from "../AuthenticationFields";
+import {
+  RegisterPresenter,
+  RegisterView,
+} from "../../../presenters/RegisterPresenter";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -24,109 +26,32 @@ const Register = () => {
   const { updateUserInfo } = useUserInfo();
   const { displayErrorMessage } = useToastListener();
 
-  const checkSubmitButtonStatus = (): boolean => {
-    return (
-      !firstName ||
-      !lastName ||
-      !alias ||
-      !password ||
-      !imageUrl ||
-      !imageFileExtension
-    );
-  };
-
-  const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key == "Enter" && !checkSubmitButtonStatus()) {
-      doRegister();
-    }
-  };
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    handleImageFile(file);
-  };
-
-  const handleImageFile = (file: File | undefined) => {
-    if (file) {
-      setImageUrl(URL.createObjectURL(file));
-
-      const reader = new FileReader();
-      reader.onload = (event: ProgressEvent<FileReader>) => {
-        const imageStringBase64 = event.target?.result as string;
-
-        // Remove unnecessary file metadata from the start of the string.
-        const imageStringBase64BufferContents =
-          imageStringBase64.split("base64,")[1];
-
-        const bytes: Uint8Array = Buffer.from(
-          imageStringBase64BufferContents,
-          "base64"
-        );
-
-        setImageBytes(bytes);
-      };
-      reader.readAsDataURL(file);
-
-      // Set image file extension (and move to a separate method)
-      const fileExtension = getFileExtension(file);
-      if (fileExtension) {
-        setImageFileExtension(fileExtension);
-      }
-    } else {
-      setImageUrl("");
-      setImageBytes(new Uint8Array());
-    }
-  };
-
-  const getFileExtension = (file: File): string | undefined => {
-    return file.name.split(".").pop();
-  };
-
   const doRegister = async () => {
-    try {
-      setIsLoading(true);
+    setIsLoading(true);
 
-      const [user, authToken] = await register(
-        firstName,
-        lastName,
-        alias,
-        password,
-        imageBytes,
-        imageFileExtension
-      );
+    presenter.doRegister(
+      firstName,
+      lastName,
+      alias,
+      password,
+      imageBytes,
+      imageFileExtension,
+      rememberMe
+    );
 
-      updateUserInfo(user, user, authToken, rememberMe);
-      navigate("/");
-    } catch (error) {
-      displayErrorMessage(
-        `Failed to register user because of exception: ${error}`
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(false);
   };
 
-  const register = async (
-    firstName: string,
-    lastName: string,
-    alias: string,
-    password: string,
-    userImageBytes: Uint8Array,
-    imageFileExtension: string
-  ): Promise<[User, AuthToken]> => {
-    // Not neded now, but will be needed when you make the request to the server in milestone 3
-    const imageStringBase64: string =
-      Buffer.from(userImageBytes).toString("base64");
-
-    // TODO: Replace with the result of calling the server
-    const user = FakeData.instance.firstUser;
-
-    if (user === null) {
-      throw new Error("Invalid registration");
-    }
-
-    return [user, FakeData.instance.authToken];
+  const listener: RegisterView = {
+    displayErrorMessage: displayErrorMessage,
+    updateUserInfo: updateUserInfo,
+    navigate: navigate,
+    setImageUrl: setImageUrl,
+    setImageBytes: setImageBytes,
+    setImageFileExtension: setImageFileExtension,
   };
+
+  const [presenter] = useState(new RegisterPresenter(listener));
 
   const inputFieldGenerator = () => {
     return (
@@ -138,7 +63,19 @@ const Register = () => {
             size={50}
             id="firstNameInput"
             placeholder="First Name"
-            onKeyDown={registerOnEnter}
+            onKeyDown={(event) =>
+              presenter.registerOnEnter(
+                event,
+                firstName,
+                lastName,
+                alias,
+                password,
+                imageBytes,
+                imageUrl,
+                imageFileExtension,
+                rememberMe
+              )
+            }
             onChange={(event) => setFirstName(event.target.value)}
           />
           <label htmlFor="firstNameInput">First Name</label>
@@ -150,13 +87,37 @@ const Register = () => {
             size={50}
             id="lastNameInput"
             placeholder="Last Name"
-            onKeyDown={registerOnEnter}
+            onKeyDown={(event) =>
+              presenter.registerOnEnter(
+                event,
+                firstName,
+                lastName,
+                alias,
+                password,
+                imageBytes,
+                imageUrl,
+                imageFileExtension,
+                rememberMe
+              )
+            }
             onChange={(event) => setLastName(event.target.value)}
           />
           <label htmlFor="lastNameInput">Last Name</label>
         </div>
         <AuthenticatinFields
-          onEnterEvent={registerOnEnter}
+          onEnterEvent={(event) =>
+            presenter.registerOnEnter(
+              event,
+              firstName,
+              lastName,
+              alias,
+              password,
+              imageBytes,
+              imageUrl,
+              imageFileExtension,
+              rememberMe
+            )
+          }
           setAlias={setAlias}
           setPassword={setPassword}
         />
@@ -165,8 +126,20 @@ const Register = () => {
             type="file"
             className="d-inline-block py-5 px-4 form-control bottom"
             id="imageFileInput"
-            onKeyDown={registerOnEnter}
-            onChange={handleFileChange}
+            onKeyDown={(event) =>
+              presenter.registerOnEnter(
+                event,
+                firstName,
+                lastName,
+                alias,
+                password,
+                imageBytes,
+                imageUrl,
+                imageFileExtension,
+                rememberMe
+              )
+            }
+            onChange={(event) => presenter.handleFileChange(event)}
           />
           <label htmlFor="imageFileInput">User Image</label>
           <img src={imageUrl} className="img-thumbnail" alt=""></img>
@@ -191,7 +164,16 @@ const Register = () => {
       inputFieldGenerator={inputFieldGenerator}
       switchAuthenticationMethodGenerator={switchAuthenticationMethodGenerator}
       setRememberMe={setRememberMe}
-      submitButtonDisabled={checkSubmitButtonStatus}
+      submitButtonDisabled={() =>
+        presenter.checkSubmitButtonStatus(
+          firstName,
+          lastName,
+          alias,
+          password,
+          imageUrl,
+          imageFileExtension
+        )
+      }
       isLoading={isLoading}
       submit={doRegister}
     />
