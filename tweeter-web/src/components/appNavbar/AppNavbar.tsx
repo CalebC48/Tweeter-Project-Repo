@@ -18,13 +18,12 @@ const AppNavbar = () => {
     clearLastInfoMessage: clearLastInfoMessage,
     clearUserInfo: clearUserInfo,
     displayErrorMessage: displayErrorMessage,
+    displayInfoMessage: displayInfoMessage,
   };
 
   const [presenter] = useState(new LogoutPresenter(listener));
 
   const logOut = async () => {
-    displayInfoMessage("Logging Out...", 0);
-
     if (!authToken) {
       displayErrorMessage("No auth token found. Please log in again.");
       return;

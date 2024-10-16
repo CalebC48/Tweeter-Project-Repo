@@ -1,29 +1,19 @@
 import { Buffer } from "buffer";
 import { ChangeEvent } from "react";
-import { User, AuthToken } from "tweeter-shared";
-import { AuthenticationService } from "../model/service/AuthenticationService";
+import {
+  AuthenticationPresenter,
+  AuthenticationView,
+} from "./AuthenticationPresenter";
 
-export interface RegisterView {
-  displayErrorMessage: (message: string) => void;
-  updateUserInfo: (
-    currentUser: User,
-    displayedUser: User | null,
-    authToken: AuthToken,
-    remember: boolean
-  ) => void;
-  navigate: (url: string) => void;
+export interface RegisterView extends AuthenticationView {
   setImageUrl: (url: string) => void;
   setImageBytes: (bytes: Uint8Array) => void;
   setImageFileExtension: (extension: string) => void;
 }
 
-export class RegisterPresenter {
-  private _view: RegisterView;
-  private authService: AuthenticationService;
-
+export class RegisterPresenter extends AuthenticationPresenter<RegisterView> {
   public constructor(view: RegisterView) {
-    this._view = view;
-    this.authService = new AuthenticationService();
+    super(view);
   }
 
   public checkSubmitButtonStatus(
@@ -55,27 +45,28 @@ export class RegisterPresenter {
     imageFileExtension: string,
     rememberMe: boolean
   ) {
-    if (
-      event.key == "Enter" &&
-      !this.checkSubmitButtonStatus(
-        firstName,
-        lastName,
-        alias,
-        password,
-        imageUrl,
-        imageFileExtension
-      )
-    ) {
-      this.doRegister(
-        firstName,
-        lastName,
-        alias,
-        password,
-        imageBytes,
-        imageFileExtension,
-        rememberMe
-      );
-    }
+    this.authenticateOnEnter(
+      event,
+      () =>
+        this.checkSubmitButtonStatus(
+          firstName,
+          lastName,
+          alias,
+          password,
+          imageUrl,
+          imageFileExtension
+        ),
+      () =>
+        this.doRegister(
+          firstName,
+          lastName,
+          alias,
+          password,
+          imageBytes,
+          imageFileExtension,
+          rememberMe
+        )
+    );
   }
 
   public handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -85,7 +76,7 @@ export class RegisterPresenter {
 
   public handleImageFile(file: File | undefined) {
     if (file) {
-      this._view.setImageUrl(URL.createObjectURL(file));
+      this.view.setImageUrl(URL.createObjectURL(file));
 
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -100,18 +91,18 @@ export class RegisterPresenter {
           "base64"
         );
 
-        this._view.setImageBytes(bytes);
+        this.view.setImageBytes(bytes);
       };
       reader.readAsDataURL(file);
 
       // Set image file extension (and move to a separate method)
       const fileExtension = this.getFileExtension(file);
       if (fileExtension) {
-        this._view.setImageFileExtension(fileExtension);
+        this.view.setImageFileExtension(fileExtension);
       }
     } else {
-      this._view.setImageUrl("");
-      this._view.setImageBytes(new Uint8Array());
+      this.view.setImageUrl("");
+      this.view.setImageBytes(new Uint8Array());
     }
   }
 
@@ -128,22 +119,19 @@ export class RegisterPresenter {
     imageFileExtension: string,
     rememberMe: boolean
   ) {
-    try {
-      const [user, authToken] = await this.authService.register(
-        firstName,
-        lastName,
-        alias,
-        password,
-        imageBytes,
-        imageFileExtension
-      );
-
-      this._view.updateUserInfo(user, user, authToken, rememberMe);
-      this._view.navigate("/");
-    } catch (error) {
-      this._view.displayErrorMessage(
-        `Failed to register user because of exception: ${error}`
-      );
-    }
+    await this.authenticateUser(
+      () =>
+        this.service.register(
+          firstName,
+          lastName,
+          alias,
+          password,
+          imageBytes,
+          imageFileExtension
+        ),
+      "register user",
+      rememberMe,
+      "/"
+    );
   }
 }

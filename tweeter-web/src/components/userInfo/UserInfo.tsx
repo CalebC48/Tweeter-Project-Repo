@@ -44,8 +44,6 @@ const UserInfo = () => {
     await presenter.followDisplayedUser(authToken!, displayedUser!);
 
     // setIsFollower(true);
-
-    clearLastInfoMessage();
     setIsLoading(false);
   };
 
@@ -57,13 +55,13 @@ const UserInfo = () => {
     setIsLoading(true);
     await presenter.unfollowDisplayedUser(authToken!, displayedUser!);
 
-    clearLastInfoMessage();
     setIsLoading(false);
   };
 
   const listener: UserInfoView = {
     displayErrorMessage: displayErrorMessage,
     displayInfoMessage: displayInfoMessage,
+    clearLastInfoMessage: clearLastInfoMessage,
     setIsFollower: setIsFollower,
     setFollowerCount: setFollowerCount,
     setFolloweeCount: setFolloweeCount,

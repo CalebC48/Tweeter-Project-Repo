@@ -23,7 +23,6 @@ const PostStatus = () => {
 
     presenter.submitPost(event, post, authToken, currentUser);
 
-    clearLastInfoMessage();
     setIsLoading(false);
   };
 
@@ -39,6 +38,7 @@ const PostStatus = () => {
   const listener: PostStatusView = {
     displayErrorMessage: displayErrorMessage,
     displayInfoMessage: displayInfoMessage,
+    clearLastInfoMessage: clearLastInfoMessage,
     setPost: setPost,
   };
 

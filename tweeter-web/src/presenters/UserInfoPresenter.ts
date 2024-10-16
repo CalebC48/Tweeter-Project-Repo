@@ -1,25 +1,19 @@
 import { AuthToken, User } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
+import { Presenter, MessageView } from "./Presenter";
 
-export interface UserInfoView {
-  displayErrorMessage: (message: string) => void;
-  displayInfoMessage: (message: string, duration: number) => void;
+export interface UserInfoView extends MessageView {
   setIsFollower: (isFollower: boolean) => void;
   setFollowerCount: (count: number) => void;
   setFolloweeCount: (count: number) => void;
 }
 
-export class UserInfoPresenter {
-  private _view: UserInfoView;
+export class UserInfoPresenter extends Presenter<UserInfoView> {
   private userService: UserService;
 
   public constructor(view: UserInfoView) {
-    this._view = view;
+    super(view);
     this.userService = new UserService();
-  }
-
-  protected get view(): UserInfoView {
-    return this._view;
   }
 
   setIsFollowerStatus = async (
@@ -27,7 +21,7 @@ export class UserInfoPresenter {
     currentUser: User,
     displayedUser: User
   ) => {
-    try {
+    this.doFailureReportingOperation(async () => {
       if (currentUser === displayedUser) {
         this.view.setIsFollower(false);
       } else {
@@ -39,43 +33,31 @@ export class UserInfoPresenter {
           )
         );
       }
-    } catch (error) {
-      this.view.displayErrorMessage(
-        `Failed to determine follower status because of exception: ${error}`
-      );
-    }
+    }, "determine follower status");
   };
 
   setNumbFollowees = async (authToken: AuthToken, displayedUser: User) => {
-    try {
+    this.doFailureReportingOperation(async () => {
       this.view.setFolloweeCount(
         await this.userService.getFolloweeCount(authToken, displayedUser)
       );
-    } catch (error) {
-      this.view.displayErrorMessage(
-        `Failed to get followees count because of exception: ${error}`
-      );
-    }
+    }, "get followees count");
   };
 
   setNumbFollowers = async (authToken: AuthToken, displayedUser: User) => {
-    try {
+    this.doFailureReportingOperation(async () => {
       this.view.setFollowerCount(
         await this.userService.getFollowerCount(authToken, displayedUser)
       );
-    } catch (error) {
-      this.view.displayErrorMessage(
-        `Failed to get followers count because of exception: ${error}`
-      );
-    }
+    }, "get followers count");
   };
 
   followDisplayedUser = async (
     authToken: AuthToken,
     displayedUser: User
   ): Promise<void> => {
-    try {
-      this._view.displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
+    this.doFailureReportingOperation(async () => {
+      this.view.displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
 
       const [followerCount, followeeCount] = await this.userService.follow(
         authToken!,
@@ -85,19 +67,17 @@ export class UserInfoPresenter {
       this.view.setIsFollower(true);
       this.view.setFollowerCount(followerCount);
       this.view.setFolloweeCount(followeeCount);
-    } catch (error) {
-      this.view.displayErrorMessage(
-        `Failed to follow user because of exception: ${error}`
-      );
-    }
+    }, "follow user");
+
+    this.view.clearLastInfoMessage();
   };
 
   unfollowDisplayedUser = async (
     authToken: AuthToken,
     displayedUser: User
   ): Promise<void> => {
-    try {
-      this._view.displayInfoMessage(`Unfollowing ${displayedUser!.name}...`, 0);
+    this.doFailureReportingOperation(async () => {
+      this.view.displayInfoMessage(`Unfollowing ${displayedUser!.name}...`, 0);
 
       const [followerCount, followeeCount] = await this.userService.unfollow(
         authToken!,
@@ -107,10 +87,8 @@ export class UserInfoPresenter {
       this.view.setIsFollower(false);
       this.view.setFollowerCount(followerCount);
       this.view.setFolloweeCount(followeeCount);
-    } catch (error) {
-      this.view.displayErrorMessage(
-        `Failed to unfollow user because of exception: ${error}`
-      );
-    }
+    }, "unfollow user");
+
+    this.view.clearLastInfoMessage();
   };
 }
