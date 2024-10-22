@@ -86,10 +86,8 @@ export class RegisterPresenter extends AuthenticationPresenter<RegisterView> {
         const imageStringBase64BufferContents =
           imageStringBase64.split("base64,")[1];
 
-        const bytes: Uint8Array = Buffer.from(
-          imageStringBase64BufferContents,
-          "base64"
-        );
+        const buffer = Buffer.from(imageStringBase64BufferContents, "base64");
+        const bytes = new Uint8Array(buffer.buffer);
 
         this.view.setImageBytes(bytes);
       };
