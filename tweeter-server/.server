@@ -1,0 +1,6 @@
+BUCKET='calebc-tweeter'
+LAMBDA_ROLE='arn:aws:iam::058264417880:user/calebwii@byu.edu'
+EDIT_LAMBDALIST='
+tweeterGetFollowees | lambda/follow/GetFolloweesLambda.handler
+'
+LAMBDALAYER_ARN='arn:aws:lambda:us-west-2:058264417880:layer:tweeterLambdaLayer:1'
