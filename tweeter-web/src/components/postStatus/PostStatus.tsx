@@ -1,14 +1,17 @@
 import "./PostStatus.css";
 import { useState } from "react";
 import useUserInfo from "../userInfo/UserInfoHook";
-import { AuthToken, Status } from "tweeter-shared";
 import useToastListener from "../toaster/ToastListenerHook";
 import {
   PostStatusView,
   PostStatusPresenter,
 } from "../../presenters/PostStatusPresenter";
 
-const PostStatus = () => {
+interface Props {
+  presenter?: PostStatusPresenter;
+}
+
+const PostStatus = (props: Props) => {
   const { displayErrorMessage, displayInfoMessage, clearLastInfoMessage } =
     useToastListener();
 
@@ -42,7 +45,9 @@ const PostStatus = () => {
     setPost: setPost,
   };
 
-  const [presenter] = useState(new PostStatusPresenter(listener));
+  const [presenter] = useState(
+    props.presenter ?? new PostStatusPresenter(listener)
+  );
 
   return (
     <div className={isLoading ? "loading" : ""}>
@@ -54,6 +59,7 @@ const PostStatus = () => {
             rows={10}
             placeholder="What's on your mind?"
             value={post}
+            aria-label="status field"
             onChange={(event) => {
               setPost(event.target.value);
             }}
