@@ -1,6 +1,8 @@
 BUCKET='calebc-tweeter'
-LAMBDA_ROLE='arn:aws:iam::058264417880:user/calebwii@byu.edu'
+LAMBDA_ROLE='arn:aws:iam::058264417880:role/cs340lambda'
 EDIT_LAMBDALIST='
 tweeterGetFollowees | lambda/follow/GetFolloweesLambda.handler
+tweeterGetFollowers | lambda/follow/GetFollowersLambda.handler
+tweeterGetFeedItems | lambda/status/GetFeedItemsLambda.handler
 '
-LAMBDALAYER_ARN='arn:aws:lambda:us-west-2:058264417880:layer:tweeterLambdaLayer:1'
+LAMBDALAYER_ARN='arn:aws:lambda:us-west-2:058264417880:layer:tweeterLambdaLayer:4'
