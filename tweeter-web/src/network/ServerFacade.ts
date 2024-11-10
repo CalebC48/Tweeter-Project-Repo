@@ -2,16 +2,23 @@ import {
   AuthResponse,
   AuthToken,
   AuthtokenRequest,
+  BooleanResponse,
+  FollowCountResponse,
+  GetUserRequest,
+  IsFollowerRequest,
   LoginRequest,
   PagedItemRequest,
   PagedItemResponse,
   PostStatusRequest,
   RegisterRequest,
+  SingleCountResponse,
   Status,
   StatusDto,
   TweeterResponse,
   User,
   UserDto,
+  UserItemRequest,
+  UserItemResponse,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 
@@ -197,7 +204,7 @@ export class ServerFacade {
       AuthResponse
     >(request, "/auth/register");
 
-    console.log(`The response body is '${JSON.stringify(response)}'`);
+    // console.log(`The response body is '${JSON.stringify(response)}'`);
 
     const user: User | null =
       response.success && response.user ? User.fromDto(response.user) : null;
@@ -233,6 +240,120 @@ export class ServerFacade {
     // Handle errors
     if (response.success) {
       return;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "Unknown error");
+    }
+  }
+
+  public async getIsFollowerStatus(
+    request: IsFollowerRequest
+  ): Promise<boolean> {
+    const response = await this.clientCommunicator.doPost<
+      IsFollowerRequest,
+      BooleanResponse
+    >(request, "/follower/isFollower");
+
+    // console.log(`The response body is '${JSON.stringify(response)}'`);
+
+    // Handle errors
+    if (response.success) {
+      return response.result;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "Unknown error");
+    }
+  }
+
+  public async getFolloweeCount(request: UserItemRequest): Promise<number> {
+    const response = await this.clientCommunicator.doPost<
+      UserItemRequest,
+      SingleCountResponse
+    >(request, "/followee/count");
+
+    // console.log(`The response body is '${JSON.stringify(response)}'`);
+
+    // Handle errors
+    if (response.success) {
+      return response.count;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "Unknown error");
+    }
+  }
+
+  public async getFollowerCount(request: UserItemRequest): Promise<number> {
+    const response = await this.clientCommunicator.doPost<
+      UserItemRequest,
+      SingleCountResponse
+    >(request, "/follower/count");
+
+    // console.log(`The response body is '${JSON.stringify(response)}'`);
+
+    // Handle errors
+    if (response.success) {
+      return response.count;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "Unknown error");
+    }
+  }
+
+  public async follow(
+    request: UserItemRequest
+  ): Promise<[followerCount: number, followeeCount: number]> {
+    const response = await this.clientCommunicator.doPost<
+      UserItemRequest,
+      FollowCountResponse
+    >(request, "/user/follow");
+
+    // console.log(`The response body is '${JSON.stringify(response)}'`);
+
+    // Handle errors
+    if (response.success) {
+      return [response.followerCount, response.followeeCount];
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "Unknown error");
+    }
+  }
+
+  public async unfollow(
+    request: UserItemRequest
+  ): Promise<[followerCount: number, followeeCount: number]> {
+    const response = await this.clientCommunicator.doPost<
+      UserItemRequest,
+      FollowCountResponse
+    >(request, "/user/unfollow");
+
+    // console.log(`The response body is '${JSON.stringify(response)}'`);
+
+    // Handle errors
+    if (response.success) {
+      return [response.followerCount, response.followeeCount];
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "Unknown error");
+    }
+  }
+
+  public async getUser(request: GetUserRequest): Promise<User | null> {
+    const response = await this.clientCommunicator.doPost<
+      GetUserRequest,
+      UserItemResponse
+    >(request, "/user");
+
+    // console.log(`The response body is '${JSON.stringify(response)}'`);
+    const user: User | null =
+      response.success && response.user ? User.fromDto(response.user) : null;
+
+    // Handle errors
+    if (response.success) {
+      if (user == null) {
+        throw new Error(`No user found`);
+      } else {
+        return user;
+      }
     } else {
       console.error(response);
       throw new Error(response.message ?? "Unknown error");
