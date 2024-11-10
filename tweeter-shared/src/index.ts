@@ -21,11 +21,24 @@ export type { PostSegmentDto } from "./model/dto/PostSegmentDto";
 // Requests
 //
 export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequest";
+export type { PostStatusRequest } from "./model/net/request/PostStatusRequest";
+export type { UserItemRequest } from "./model/net/request/UserItemRequest";
+export type { GetUserRequest } from "./model/net/request/GetUserRequest";
+export type { IsFollowerRequest } from "./model/net/request/IsFollowerRequest";
+export type { LoginRequest } from "./model/net/request/LoginRequest";
+export type { RegisterRequest } from "./model/net/request/RegisterRequest";
+export type { AuthtokenRequest } from "./model/net/request/AuthtokenRequest";
 
 //
 // Responses
 //
 export type { PagedUserItemResponse } from "./model/net/response/PagedUserItemResponse";
+export type { TweeterResponse } from "./model/net/response/TweeterResponse";
+export type { BooleanResponse } from "./model/net/response/BooleanResponse";
+export type { FollowCountResponse } from "./model/net/response/FollowCountResponse";
+export type { SingleCountResponse } from "./model/net/response/SingleCountResponse";
+export type { UserItemResponse } from "./model/net/response/UserItemResponse";
+export type { AuthResponse } from "./model/net/response/AuthResponse";
 
 //
 // Other

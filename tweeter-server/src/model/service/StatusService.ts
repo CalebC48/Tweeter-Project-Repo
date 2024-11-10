@@ -12,19 +12,16 @@ export class StatusService {
   }
 
   public async loadMoreStoryItems(
-    authToken: AuthToken,
+    token: string,
     userAlias: string,
     pageSize: number,
-    lastItem: Status | null
-  ): Promise<[Status[], boolean]> {
+    lastItem: StatusDto | null
+  ): Promise<[StatusDto[], boolean]> {
     // TODO: Replace with the result of calling server
-    return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
+    return this.getFakeData(lastItem, pageSize);
   }
 
-  public async postStatus(
-    authToken: AuthToken,
-    newStatus: Status
-  ): Promise<void> {
+  public async postStatus(token: String, newStatus: StatusDto): Promise<void> {
     // Pause so we can see the logging out message. Remove when connected to the server
     await new Promise((f) => setTimeout(f, 2000));
 
