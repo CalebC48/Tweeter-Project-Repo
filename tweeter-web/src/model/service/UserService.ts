@@ -1,6 +1,8 @@
 import { AuthToken, User, FakeData } from "tweeter-shared";
+import { ServerFacade } from "../../network/ServerFacade";
 
 export class UserService {
+  private serverFacade = new ServerFacade();
   public async getIsFollowerStatus(
     authToken: AuthToken,
     user: User,
