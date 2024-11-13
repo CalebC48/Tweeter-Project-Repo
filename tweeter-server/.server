@@ -1,0 +1,19 @@
+BUCKET='calebc-tweeter'
+LAMBDA_ROLE='arn:aws:iam::058264417880:role/cs340lambda'
+EDIT_LAMBDALIST='
+tweeterGetFollowees | lambda/follow/GetFolloweesLambda.handler
+tweeterGetFollowers | lambda/follow/GetFollowersLambda.handler
+tweeterGetFeedItems | lambda/status/GetFeedItemsLambda.handler
+tweeterGetStoryItems | lambda/status/GetStoryItemsLambda.handler
+tweeterPostStatus | lambda/status/PostStatusLambda.handler
+tweeterFollow | lambda/user/FollowLambda.handler
+tweeterGetFolloweeCount | lambda/user/GetFolloweeCountLambda.handler
+tweeterGetFollowerCount | lambda/user/GetFollowerCountLambda.handler
+tweeterGetIsFollower | lambda/user/GetIsFollowerLambda.handler
+tweeterGetUser | lambda/user/GetUserLambda.handler
+tweeterUnfollow | lambda/user/UnfollowLambda.handler
+tweeterLogin | lambda/auth/LoginLambda.handler
+tweeterLogout | lambda/auth/LogoutLambda.handler
+tweeterRegister | lambda/auth/RegisterLambda.handler
+'
+LAMBDALAYER_ARN='arn:aws:lambda:us-west-2:058264417880:layer:tweeterLambdaLayer:9'
