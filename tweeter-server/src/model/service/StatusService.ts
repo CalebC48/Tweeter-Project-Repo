@@ -1,6 +1,9 @@
 import { AuthToken, Status, FakeData, StatusDto } from "tweeter-shared";
+import IDAOFactory from "../../util/daos/factories/IDAOFactory";
 
 export class StatusService {
+  constructor(daoFactory: IDAOFactory) {}
+
   public async loadMoreFeedItems(
     token: string,
     userAlias: string,

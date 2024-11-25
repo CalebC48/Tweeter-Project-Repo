@@ -1,6 +1,9 @@
 import { User, FakeData, UserDto } from "tweeter-shared";
+import IDAOFactory from "../../util/daos/factories/IDAOFactory";
 
 export class UserService {
+  constructor(daoFactory: IDAOFactory) {}
+
   public async getIsFollowerStatus(
     token: string,
     user: UserDto,

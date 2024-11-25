@@ -1,8 +1,10 @@
-import { User, AuthToken, FakeData, UserDto } from "tweeter-shared";
-import { Buffer } from "buffer";
+import { FakeData, UserDto } from "tweeter-shared";
 import { AuthTokenDto } from "tweeter-shared/dist/model/dto/AuthTokenDto";
+import IDAOFactory from "../../util/daos/factories/IDAOFactory";
 
 export class AuthenticationService {
+  constructor(daoFactory: IDAOFactory) {}
+
   public async login(
     alias: string,
     password: string
