@@ -11,6 +11,8 @@ import { FeedDAODynamo } from "../dynamoDB/FeedDAODynamo";
 import { FollowDAODynamo } from "../dynamoDB/FollowDAODynamo";
 import { StatusDAODynamo } from "../dynamoDB/StatusDAODynamo";
 import S3DAODynamo from "../dynamoDB/S3DAODynamo";
+import { IAuthDAO } from "../IAuthDAO";
+import AuthDAODynamo from "../dynamoDB/AuthDAODynamo";
 
 export default class DynamoDBFactory implements IDAOFactory {
   createUserDAO(): IUserDAO {
@@ -27,6 +29,10 @@ export default class DynamoDBFactory implements IDAOFactory {
 
   createStatusDAO(): IStatusDAO {
     return new StatusDAODynamo();
+  }
+
+  createAuthDAO(): IAuthDAO {
+    return new AuthDAODynamo();
   }
 
   createS3DAO(): IS3DAO {

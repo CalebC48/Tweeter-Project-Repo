@@ -1,11 +1,15 @@
-import { User } from "tweeter-shared";
+import { UserDto } from "tweeter-shared";
 
 export interface IUserDAO {
-  putUser(user: User): Promise<void>;
+  putUser(user: UserDto, password: string): Promise<void>;
 
-  deleteUser(user: User): Promise<void>;
+  deleteUser(userAlias: string): Promise<void>;
 
-  getUser(user: User): Promise<User | undefined>;
+  getUser(
+    userAlias: string
+  ): Promise<{ user: UserDto; password: string } | undefined>;
 
-  updateUser(user: User): Promise<void>;
+  updateUser(user: UserDto): Promise<void>;
+
+  batchGetUsers(users: string[]): Promise<UserDto[]>;
 }

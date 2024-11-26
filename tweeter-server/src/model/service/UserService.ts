@@ -1,8 +1,16 @@
 import { User, FakeData, UserDto } from "tweeter-shared";
 import IDAOFactory from "../../util/daos/factories/IDAOFactory";
+import { IUserDAO } from "../../util/daos/IUserDAO";
+import { IAuthDAO } from "../../util/daos/IAuthDAO";
 
 export class UserService {
-  constructor(daoFactory: IDAOFactory) {}
+  private userDAO: IUserDAO;
+  private authDAO: IAuthDAO;
+
+  constructor(daoFactory: IDAOFactory) {
+    this.userDAO = daoFactory.createUserDAO();
+    this.authDAO = daoFactory.createAuthDAO();
+  }
 
   public async getIsFollowerStatus(
     token: string,
@@ -55,6 +63,14 @@ export class UserService {
 
   public async getUser(token: string, alias: string): Promise<User | null> {
     // TODO: Replace with the result of calling server
-    return FakeData.instance.findUserByAlias(alias);
+    const verify = await this.authDAO.validateToken(token, 60);
+
+    if (!verify) {
+      throw new Error("Invalid token");
+    }
+
+    const res = await this.userDAO.getUser(alias);
+    const dto = res?.user;
+    return dto ? User.fromDto(dto) : null;
   }
 }
