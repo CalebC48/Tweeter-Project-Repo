@@ -50,7 +50,7 @@ export class AuthenticationService {
       throw new Error("Invalid alias or password");
     }
 
-    const authtoken = await this.authDAO.createToken(60);
+    const authtoken = await this.authDAO.createToken(alias, 60);
 
     return [user, authtoken];
   }
@@ -108,7 +108,7 @@ export class AuthenticationService {
     }
 
     console.log("Creating token");
-    const authtoken = await this.authDAO.createToken(60);
+    const authtoken = await this.authDAO.createToken(alias, 60);
 
     console.log("Returning user and token");
     console.log(`User: ${dbUser.user}`);
@@ -117,7 +117,6 @@ export class AuthenticationService {
   }
 
   public async logout(token: string): Promise<void> {
-    // Pause so we can see the logging out message. Delete when the call to the server is implemented.
     await this.authDAO.deleteToken(token);
   }
 }

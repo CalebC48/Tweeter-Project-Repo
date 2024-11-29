@@ -7,7 +7,7 @@ export interface IFollowDAO {
 
   getFollow(follow: Follow): Promise<Follow | undefined>;
 
-  updateFollow(follow: Follow): Promise<void>;
+  isFollower(followerHandle: string, followeeHandle: string): Promise<boolean>;
 
   getPageOfFollowees(
     followerHandle: string,

@@ -17,6 +17,8 @@ export class UserDAODynamo implements IUserDAO {
   readonly lastNameAttr = "lastName";
   readonly imageUrlAttr = "imageUrl";
   readonly passwordAttr = "password";
+  readonly followersAttr = "followers";
+  readonly followeesAttr = "followees";
 
   private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
@@ -112,6 +114,73 @@ export class UserDAODynamo implements IUserDAO {
     return [];
   }
 
+  async increamentFollow(
+    userAlias: string,
+    isFollowee: boolean
+  ): Promise<void> {
+    const field = isFollowee ? this.followeesAttr : this.followersAttr;
+    const params = {
+      TableName: this.tableName,
+      Key: {
+        [this.aliasAttr]: userAlias,
+      },
+      UpdateExpression: `SET #${field} = #${field} + :increment`,
+      ExpressionAttributeNames: {
+        [`#${field}`]: field,
+      },
+      ExpressionAttributeValues: {
+        ":increment": 1,
+      },
+    };
+    await this.client.send(new UpdateCommand(params));
+  }
+
+  async decreamentFollow(
+    userAlias: string,
+    isFollowee: boolean
+  ): Promise<void> {
+    const field = isFollowee ? this.followeesAttr : this.followersAttr;
+    const params = {
+      TableName: this.tableName,
+      Key: {
+        [this.aliasAttr]: userAlias,
+      },
+      UpdateExpression: `SET #${field} = #${field} - :decrement`,
+      ConditionExpression: `#${field} > :zero`,
+      ExpressionAttributeNames: {
+        [`#${field}`]: field,
+      },
+      ExpressionAttributeValues: {
+        ":decrement": 1,
+        ":zero": 0,
+      },
+    };
+    await this.client.send(new UpdateCommand(params));
+  }
+
+  async getFollows(userAlias: string): Promise<[number, number]> {
+    const params = {
+      TableName: this.tableName,
+      Key: {
+        [this.aliasAttr]: userAlias,
+      },
+      ProjectionExpression: `#followers, #followees`,
+      ExpressionAttributeNames: {
+        "#followers": this.followersAttr,
+        "#followees": this.followeesAttr,
+      },
+    };
+
+    const response = await this.client.send(new GetCommand(params));
+    if (response.Item) {
+      return [
+        response.Item[this.followersAttr] ?? 0,
+        response.Item[this.followeesAttr] ?? 0,
+      ];
+    }
+    return [0, 0];
+  }
+
   private generateUserItem(user: UserDto, password: string) {
     return {
       [this.aliasAttr]: user.alias,
@@ -119,6 +188,8 @@ export class UserDAODynamo implements IUserDAO {
       [this.lastNameAttr]: user.lastName,
       [this.imageUrlAttr]: user.imageUrl,
       [this.passwordAttr]: password,
+      [this.followersAttr]: 0,
+      [this.followeesAttr]: 0,
     };
   }
 }

@@ -12,4 +12,10 @@ export interface IUserDAO {
   updateUser(user: UserDto): Promise<void>;
 
   batchGetUsers(users: string[]): Promise<UserDto[]>;
+
+  increamentFollow(userAlias: string, isFollowee: boolean): Promise<void>;
+
+  decreamentFollow(userAlias: string, isFollowee: boolean): Promise<void>;
+
+  getFollows(userAlias: string): Promise<[number, number]>;
 }

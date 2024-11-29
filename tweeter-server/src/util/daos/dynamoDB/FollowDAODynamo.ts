@@ -15,8 +15,6 @@ export class FollowDAODynamo implements IFollowDAO {
   readonly indexName = "follows_index";
   readonly followerHandleAttr = "follower_handle";
   readonly followeeHandleAttr = "followee_handle";
-  readonly followerNameAttr = "follower_name";
-  readonly followeeNameAttr = "followee_name";
 
   private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
@@ -45,27 +43,25 @@ export class FollowDAODynamo implements IFollowDAO {
     return response.Item as Follow | undefined;
   }
 
-  async updateFollow(follow: Follow): Promise<void> {
+  async isFollower(
+    followerHandle: string,
+    followeeHandle: string
+  ): Promise<boolean> {
     const params = {
       TableName: this.tableName,
-      Key: this.generateFollowKey(follow),
-      UpdateExpression: "SET #name = :name",
-      ExpressionAttributeNames: {
-        "#name": this.followerNameAttr,
-      },
-      ExpressionAttributeValues: {
-        ":name": follow.follower_name,
+      Key: {
+        [this.followerHandleAttr]: followerHandle,
+        [this.followeeHandleAttr]: followeeHandle,
       },
     };
-    await this.client.send(new UpdateCommand(params));
+    const response = await this.client.send(new GetCommand(params));
+    return response.Item !== undefined;
   }
 
   private generateFollowItem(follow: Follow) {
     return {
       [this.followerHandleAttr]: follow.follower_handle,
       [this.followeeHandleAttr]: follow.followee_handle,
-      [this.followerNameAttr]: follow.follower_name,
-      [this.followeeNameAttr]: follow.followee_name,
     };
   }
 
@@ -102,12 +98,7 @@ export class FollowDAODynamo implements IFollowDAO {
     const hasMorePages = data.LastEvaluatedKey !== undefined;
     data.Items?.forEach((item) =>
       items.push(
-        new Follow(
-          item[this.followerHandleAttr],
-          item[this.followeeHandleAttr],
-          item[this.followerNameAttr],
-          item[this.followeeNameAttr]
-        )
+        new Follow(item[this.followerHandleAttr], item[this.followeeHandleAttr])
       )
     );
 
@@ -143,12 +134,7 @@ export class FollowDAODynamo implements IFollowDAO {
 
     data.Items?.forEach((item) =>
       items.push(
-        new Follow(
-          item[this.followerHandleAttr],
-          item[this.followeeHandleAttr],
-          item[this.followerNameAttr],
-          item[this.followeeNameAttr]
-        )
+        new Follow(item[this.followerHandleAttr], item[this.followeeHandleAttr])
       )
     );
 

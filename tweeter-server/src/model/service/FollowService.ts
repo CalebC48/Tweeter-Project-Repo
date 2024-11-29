@@ -21,8 +21,12 @@ export class FollowService {
     pageSize: number,
     lastItem: UserDto | null
   ): Promise<[UserDto[], boolean]> {
-    // TODO: Replace with the result of calling server
-    this.authDAO.validateToken(authToken, 60);
+    const verify = await this.authDAO.validateToken(authToken, 60);
+
+    if (!verify) {
+      throw new Error("Invalid token");
+    }
+
     const page = await this.followDAO.getPageOfFollowers(
       userAlias,
       pageSize,
@@ -38,8 +42,12 @@ export class FollowService {
     pageSize: number,
     lastItem: UserDto | null
   ): Promise<[UserDto[], boolean]> {
-    // TODO: Replace with the result of calling server
-    this.authDAO.validateToken(authToken, 60);
+    const verify = await this.authDAO.validateToken(authToken, 60);
+
+    if (!verify) {
+      throw new Error("Invalid token");
+    }
+
     const page = await this.followDAO.getPageOfFollowees(
       userAlias,
       pageSize,

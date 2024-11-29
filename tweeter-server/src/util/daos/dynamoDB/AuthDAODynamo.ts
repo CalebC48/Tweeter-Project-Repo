@@ -19,7 +19,10 @@ export default class AuthDAODynamo implements IAuthDAO {
     return crypto.randomBytes(32).toString("hex");
   }
 
-  async createToken(ttlInMinutes: number): Promise<AuthTokenDto> {
+  async createToken(
+    userAlias: string,
+    ttlInMinutes: number
+  ): Promise<AuthTokenDto> {
     const timestamp = Math.floor(Date.now() / 1000);
     const expirationTime = timestamp + ttlInMinutes * 60;
     const token = this.generateToken();
@@ -29,7 +32,8 @@ export default class AuthDAODynamo implements IAuthDAO {
       TableName: AUTH_TOKENS_TABLE,
       Item: {
         token: token,
-        expiresAt: expirationTime,
+        alias: userAlias,
+        ExpiresAt: expirationTime,
       },
     };
 
@@ -77,5 +81,20 @@ export default class AuthDAODynamo implements IAuthDAO {
     };
 
     await this.client.send(new DeleteCommand(params));
+  }
+
+  async getUser(token: string): Promise<string | undefined> {
+    const params = {
+      TableName: AUTH_TOKENS_TABLE,
+      Key: { token: token },
+    };
+
+    const response = await this.client.send(new GetCommand(params));
+
+    if (response.Item) {
+      return response.Item.alias;
+    }
+
+    return undefined;
   }
 }
