@@ -1,11 +1,11 @@
-import { Status } from "tweeter-shared";
+import { DataPage, Status, StatusDto } from "tweeter-shared";
 
 export interface IFeedDAO {
-  putFeed(feed: Status): Promise<void>;
+  putFeed(feed: StatusDto, receiver_aliases: string[]): Promise<void>;
 
-  deleteFeed(feed: Status): Promise<void>;
-
-  getFeed(feed: Status): Promise<Status | undefined>;
-
-  updateFeed(feed: Status): Promise<void>;
+  getPageOfStatuses(
+    receiverAlias: string,
+    pageSize: number,
+    lastKey?: string
+  ): Promise<DataPage<StatusDto>>;
 }

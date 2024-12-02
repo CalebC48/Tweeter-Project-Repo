@@ -37,6 +37,7 @@ export class AuthenticationService {
     password: string
   ): Promise<[UserDto, AuthTokenDto]> {
     const userResult = await this.userDAO.getUser(alias);
+    console.log(`Got user result: ${userResult}`);
 
     if (!userResult) {
       throw new Error("Invalid alias or password");
@@ -44,7 +45,9 @@ export class AuthenticationService {
 
     const { user, password: dbPassword } = userResult;
 
-    const verify = this.comparePasswords(password, dbPassword);
+    console.log("Comparing password: ", password);
+    const verify = await this.comparePasswords(password, dbPassword);
+    console.log("Password comparison result: ", verify);
 
     if (user === null || !verify) {
       throw new Error("Invalid alias or password");
@@ -52,6 +55,7 @@ export class AuthenticationService {
 
     const authtoken = await this.authDAO.createToken(alias, 60);
 
+    console.log(`Returning user and token: ${user}, ${authtoken}`);
     return [user, authtoken];
   }
 

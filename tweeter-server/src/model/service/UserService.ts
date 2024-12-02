@@ -36,6 +36,7 @@ export class UserService {
       throw new Error("Invalid token");
     }
 
+    console.log("Getting followee count");
     const follows = await this.userDAO.getFollows(user.alias);
     return follows[1];
   }
@@ -47,6 +48,7 @@ export class UserService {
       throw new Error("Invalid token");
     }
 
+    console.log("Getting follower count");
     const follows = await this.userDAO.getFollows(user.alias);
     return follows[0];
   }
@@ -55,6 +57,7 @@ export class UserService {
     token: string,
     userToFollow: UserDto
   ): Promise<[followerCount: number, followeeCount: number]> {
+    console.log("Following user", userToFollow);
     const verify = await this.authDAO.validateToken(token, 60);
 
     if (!verify) {
@@ -62,22 +65,27 @@ export class UserService {
     }
 
     const currentUserAlias = await this.authDAO.getUser(token);
+    console.log("Current user alias", currentUserAlias);
 
     if (!currentUserAlias) {
       throw new Error("User not found");
     }
 
+    console.log("Putting follow");
     this.followDAO.putFollow({
       follower_handle: currentUserAlias,
       followee_handle: userToFollow.alias,
     });
 
-    this.userDAO.increamentFollow(userToFollow.alias, false);
-    this.userDAO.increamentFollow(currentUserAlias, true);
+    console.log("Incrementing follow");
+    await this.userDAO.increamentFollow(userToFollow.alias, false);
+    await this.userDAO.increamentFollow(currentUserAlias, true);
 
+    console.log("Getting follower count");
     const followerCount = await this.getFollowerCount(token, userToFollow);
     const followeeCount = await this.getFolloweeCount(token, userToFollow);
 
+    console.log("Returning counts", followerCount, followeeCount);
     return [followerCount, followeeCount];
   }
 

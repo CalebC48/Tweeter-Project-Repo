@@ -140,4 +140,39 @@ export class FollowDAODynamo implements IFollowDAO {
 
     return new DataPage<Follow>(items, hasMorePages);
   }
+
+  async getFollowersAliases(followeeHandle: string): Promise<string[]> {
+    console.log("Getting followers aliases for followee: ", followeeHandle);
+    const params = {
+      TableName: this.tableName,
+      IndexName: this.indexName,
+      KeyConditionExpression: `${this.followeeHandleAttr} = :followeeHandle`,
+      ExpressionAttributeValues: {
+        ":followeeHandle": followeeHandle,
+      },
+      ProjectionExpression: this.followerHandleAttr,
+    };
+
+    const aliases: string[] = [];
+    let lastEvaluatedKey;
+
+    do {
+      const result: any = await this.client.send(
+        new QueryCommand({
+          ...params,
+          ExclusiveStartKey: lastEvaluatedKey,
+        })
+      );
+
+      if (result.Items) {
+        aliases.push(
+          ...result.Items.map((item: any) => item[this.followerHandleAttr])
+        );
+      }
+
+      lastEvaluatedKey = result.LastEvaluatedKey;
+    } while (lastEvaluatedKey);
+
+    return aliases;
+  }
 }

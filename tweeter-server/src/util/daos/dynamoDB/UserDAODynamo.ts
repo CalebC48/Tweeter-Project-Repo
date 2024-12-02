@@ -43,6 +43,12 @@ export class UserDAODynamo implements IUserDAO {
   async getUser(
     userAlias: string
   ): Promise<{ user: UserDto; password: string } | undefined> {
+    console.log("Getting user with alias: ", userAlias);
+    if (userAlias.startsWith("@")) {
+      userAlias = userAlias.slice(1);
+      console.log("Removed @ from alias: ", userAlias);
+    }
+
     const params = {
       TableName: this.tableName,
       Key: {
@@ -50,6 +56,7 @@ export class UserDAODynamo implements IUserDAO {
       },
     };
     const response = await this.client.send(new GetCommand(params));
+    console.log("Got response: ", response);
     if (response.Item) {
       return {
         user: {

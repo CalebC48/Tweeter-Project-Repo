@@ -20,4 +20,6 @@ export interface IFollowDAO {
     pageSize: number,
     lastFollowerHandle: string | undefined
   ): Promise<DataPage<Follow>>;
+
+  getFollowersAliases(followeeHandle: string): Promise<string[]>;
 }
