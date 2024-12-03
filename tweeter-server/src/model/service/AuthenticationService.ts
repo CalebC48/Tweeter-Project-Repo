@@ -53,7 +53,7 @@ export class AuthenticationService {
       throw new Error("Invalid alias or password");
     }
 
-    const authtoken = await this.authDAO.createToken(alias, 60);
+    const authtoken = await this.authDAO.createToken(alias, 1);
 
     console.log(`Returning user and token: ${user}, ${authtoken}`);
     return [user, authtoken];

@@ -1,4 +1,4 @@
-import { AuthToken, User, FakeData, UserDto, Follow } from "tweeter-shared";
+import { UserDto } from "tweeter-shared";
 import IDAOFactory from "../../util/daos/factories/IDAOFactory";
 import { IFollowDAO } from "../../util/daos/IFollowDAO";
 import { IUserDAO } from "../../util/daos/IUserDAO";
@@ -21,7 +21,7 @@ export class FollowService {
     pageSize: number,
     lastItem: UserDto | null
   ): Promise<[UserDto[], boolean]> {
-    const verify = await this.authDAO.validateToken(authToken, 60);
+    const verify = await this.authDAO.validateToken(authToken, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
@@ -42,7 +42,7 @@ export class FollowService {
     pageSize: number,
     lastItem: UserDto | null
   ): Promise<[UserDto[], boolean]> {
-    const verify = await this.authDAO.validateToken(authToken, 60);
+    const verify = await this.authDAO.validateToken(authToken, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
@@ -64,18 +64,4 @@ export class FollowService {
     const dtos = await this.userDAO.batchGetUsers(items);
     return [dtos, hasMore];
   }
-
-  // private async getFakeData(
-  //   lastItem: UserDto | null,
-  //   pageSize: number,
-  //   userAlias: string
-  // ): Promise<[UserDto[], boolean]> {
-  //   const [items, hasMore] = FakeData.instance.getPageOfUsers(
-  //     User.fromDto(lastItem),
-  //     pageSize,
-  //     userAlias
-  //   );
-  //   const dtos = items.map((user) => user.dto);
-  //   return [dtos, hasMore];
-  // }
 }

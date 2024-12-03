@@ -1,4 +1,4 @@
-import { AuthToken, Status, FakeData, StatusDto } from "tweeter-shared";
+import { StatusDto } from "tweeter-shared";
 import IDAOFactory from "../../util/daos/factories/IDAOFactory";
 import { IAuthDAO } from "../../util/daos/IAuthDAO";
 import { IStatusDAO } from "../../util/daos/IStatusDAO";
@@ -27,7 +27,7 @@ export class StatusService {
     pageSize: number,
     lastItem: StatusDto | null
   ): Promise<[StatusDto[], boolean]> {
-    const verify = await this.authDAO.validateToken(token, 60);
+    const verify = await this.authDAO.validateToken(token, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
@@ -54,7 +54,7 @@ export class StatusService {
     pageSize: number,
     lastItem: StatusDto | null
   ): Promise<[StatusDto[], boolean]> {
-    const verify = await this.authDAO.validateToken(authToken, 60);
+    const verify = await this.authDAO.validateToken(authToken, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
@@ -74,7 +74,7 @@ export class StatusService {
   public async postStatus(token: string, newStatus: StatusDto): Promise<void> {
     console.log("Posting status", newStatus);
     console.log("Verifying token", token);
-    const verify = await this.authDAO.validateToken(token, 60);
+    const verify = await this.authDAO.validateToken(token, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
@@ -95,18 +95,6 @@ export class StatusService {
     console.log("Status put");
 
     // TODO: Call the server to post the status
-  }
-
-  private async getFakeData(
-    lastItem: StatusDto | null,
-    pageSize: number
-  ): Promise<[StatusDto[], boolean]> {
-    const [items, hasMore] = FakeData.instance.getPageOfStatuses(
-      Status.fromDto(lastItem),
-      pageSize
-    );
-    const dtos = items.map((status) => status.dto);
-    return [dtos, hasMore];
   }
 
   private async populateUsers(values: StatusDto[]): Promise<StatusDto[]> {

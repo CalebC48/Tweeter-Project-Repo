@@ -1,4 +1,4 @@
-import { User, FakeData, UserDto } from "tweeter-shared";
+import { User, UserDto } from "tweeter-shared";
 import IDAOFactory from "../../util/daos/factories/IDAOFactory";
 import { IUserDAO } from "../../util/daos/IUserDAO";
 import { IAuthDAO } from "../../util/daos/IAuthDAO";
@@ -20,7 +20,7 @@ export class UserService {
     user: UserDto,
     selectedUser: UserDto
   ): Promise<boolean> {
-    const verify = await this.authDAO.validateToken(token, 60);
+    const verify = await this.authDAO.validateToken(token, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
@@ -30,7 +30,7 @@ export class UserService {
   }
 
   public async getFolloweeCount(token: string, user: UserDto): Promise<number> {
-    const verify = await this.authDAO.validateToken(token, 60);
+    const verify = await this.authDAO.validateToken(token, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
@@ -42,7 +42,7 @@ export class UserService {
   }
 
   public async getFollowerCount(token: string, user: UserDto): Promise<number> {
-    const verify = await this.authDAO.validateToken(token, 60);
+    const verify = await this.authDAO.validateToken(token, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
@@ -58,7 +58,7 @@ export class UserService {
     userToFollow: UserDto
   ): Promise<[followerCount: number, followeeCount: number]> {
     console.log("Following user", userToFollow);
-    const verify = await this.authDAO.validateToken(token, 60);
+    const verify = await this.authDAO.validateToken(token, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
@@ -93,7 +93,7 @@ export class UserService {
     token: string,
     userToUnfollow: UserDto
   ): Promise<[followerCount: number, followeeCount: number]> {
-    const verify = await this.authDAO.validateToken(token, 60);
+    const verify = await this.authDAO.validateToken(token, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
@@ -121,7 +121,7 @@ export class UserService {
 
   public async getUser(token: string, alias: string): Promise<User | null> {
     // TODO: Replace with the result of calling server
-    const verify = await this.authDAO.validateToken(token, 60);
+    const verify = await this.authDAO.validateToken(token, 5);
 
     if (!verify) {
       throw new Error("Invalid token");

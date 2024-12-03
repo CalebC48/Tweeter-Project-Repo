@@ -6,7 +6,6 @@ import {
   PostStatusView,
   PostStatusPresenter,
 } from "../../presenters/PostStatusPresenter";
-import { FakeData, Status } from "tweeter-shared";
 
 interface Props {
   presenter?: PostStatusPresenter;
