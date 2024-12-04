@@ -54,8 +54,13 @@ export class ServerFacade {
         return [items, response.hasMore];
       }
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -85,8 +90,13 @@ export class ServerFacade {
         return [items, response.hasMore];
       }
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -115,8 +125,13 @@ export class ServerFacade {
         return [items, response.hasMore];
       }
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -145,8 +160,13 @@ export class ServerFacade {
         return [items, response.hasMore];
       }
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -162,8 +182,13 @@ export class ServerFacade {
     if (response.success) {
       return;
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -193,8 +218,13 @@ export class ServerFacade {
         return [user, authToken];
       }
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -222,8 +252,13 @@ export class ServerFacade {
         return [user, authToken];
       }
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -241,8 +276,13 @@ export class ServerFacade {
     if (response.success) {
       return;
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -260,8 +300,13 @@ export class ServerFacade {
     if (response.success) {
       return response.result;
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -277,8 +322,13 @@ export class ServerFacade {
     if (response.success) {
       return response.count;
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -294,8 +344,13 @@ export class ServerFacade {
     if (response.success) {
       return response.count;
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -313,8 +368,13 @@ export class ServerFacade {
     if (response.success) {
       return [response.followerCount, response.followeeCount];
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -332,8 +392,13 @@ export class ServerFacade {
     if (response.success) {
       return [response.followerCount, response.followeeCount];
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 
@@ -355,8 +420,13 @@ export class ServerFacade {
         return user;
       }
     } else {
+      const response_object = response as any;
+      const normalizedMessage =
+        response_object.message ??
+        response_object.errorMessage ??
+        "Unknown error";
       console.error(response);
-      throw new Error(response.message ?? "Unknown error");
+      throw new Error(normalizedMessage);
     }
   }
 }

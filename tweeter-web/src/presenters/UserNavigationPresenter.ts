@@ -22,7 +22,12 @@ export class UserNavigationPresenter extends Presenter<UserNavigationView> {
     event.preventDefault();
 
     this.doFailureReportingOperation(async () => {
-      const alias = this.extractAlias(event.target.toString());
+      const target = event.currentTarget as HTMLAnchorElement;
+      const alias = target.textContent?.trim();
+
+      if (!alias) {
+        throw new Error("Alias could not be determined");
+      }
 
       const user = await this.userService.getUser(authToken!, alias);
 

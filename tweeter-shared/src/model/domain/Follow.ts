@@ -1,27 +1,22 @@
-import { User } from "./User";
-
 export class Follow {
-    private _follower: User;
-    private _followee: User;
+  follower_handle: string;
+  followee_handle: string;
+  follower_name: string;
+  followee_name: string;
 
-    public constructor(follower: User, followee: User) {
-        this._follower = follower;
-        this._followee = followee;
-    }
+  constructor(
+    follower_handle: string,
+    followee_handle: string,
+    follower_name: string,
+    followee_name: string
+  ) {
+    this.follower_handle = follower_handle;
+    this.followee_handle = followee_handle;
+    this.follower_name = follower_name;
+    this.followee_name = followee_name;
+  }
 
-    public get follower(): User {
-        return this._follower;
-    }
-
-    public set follower(value: User) {
-        this._follower = value;
-    }
-    
-    public get followee(): User {
-        return this._followee;
-    }
-
-    public set followee(value: User) {
-        this._followee = value;
-    }    
+  toString(): string {
+    return `Follow: {follower_handle: ${this.follower_handle}, followee_handle: ${this.followee_handle}, follower_name: ${this.follower_name}, followee_name: ${this.followee_name}}`;
+  }
 }

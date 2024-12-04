@@ -9,6 +9,7 @@ export { PostSegment, Type } from "./model/domain/PostSegment";
 export { Status } from "./model/domain/Status";
 export { User } from "./model/domain/User";
 export { AuthToken } from "./model/domain/AuthToken";
+export { DataPage } from "./model/domain/DataPage";
 
 //
 // DTOs
