@@ -1,6 +1,5 @@
 import { IS3DAO } from "../IS3DAO";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { ObjectCannedACL } from "@aws-sdk/client-s3";
 
 const BUCKET = "calebc-tweeter";
 const REGION = "us-west-2";
