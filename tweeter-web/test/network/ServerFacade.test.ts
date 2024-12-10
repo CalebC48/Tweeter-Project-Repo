@@ -40,8 +40,6 @@ describe("ServerFacade Integration Tests", () => {
       lastItem: null,
     };
 
-    // let result: [User[], boolean];
-
     const result = await serverFacade.getMoreFollowers(request);
 
     const [followers, hasMore] = result!;

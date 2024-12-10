@@ -1,4 +1,4 @@
-import { AuthToken, Status, FakeData } from "tweeter-shared";
+import { AuthToken, Status } from "tweeter-shared";
 import { ServerFacade } from "../../network/ServerFacade";
 
 export class StatusService {
