@@ -171,12 +171,13 @@ export class ServerFacade {
   }
 
   public async postStatus(request: PostStatusRequest): Promise<void> {
+    console.log(`Posting status '${JSON.stringify(request)}'`);
     const response = await this.clientCommunicator.doPost<
       PostStatusRequest,
       TweeterResponse
     >(request, "/status");
 
-    // console.log(`The response body is '${JSON.stringify(response)}'`);
+    console.log(`The response body is '${JSON.stringify(response)}'`);
 
     // Handle errors
     if (response.success) {

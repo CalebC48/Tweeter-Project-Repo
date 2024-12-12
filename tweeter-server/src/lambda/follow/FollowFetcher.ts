@@ -32,7 +32,7 @@ export const handler = async (event: any) => {
 
   const aliases = await followService.getFollowerAliases(statusDto.user.alias);
 
-  const jobSize = 25;
+  const jobSize = 100;
   const followerJobs = [];
   for (let j = 0; j < aliases.length; j += jobSize) {
     const job = aliases.slice(j, j + jobSize);
