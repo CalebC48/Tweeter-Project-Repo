@@ -57,6 +57,11 @@ export class FollowService {
     return this.getDtos(followees, page.hasMorePages);
   }
 
+  public async getFollowerAliases(userAlias: string): Promise<string[]> {
+    const followers = await this.followDAO.getFollowersAliases(userAlias);
+    return followers;
+  }
+
   private async getDtos(
     items: string[],
     hasMore: boolean
@@ -65,3 +70,7 @@ export class FollowService {
     return [dtos, hasMore];
   }
 }
+
+//feed
+//receiver_alias
+//time&sender_alias

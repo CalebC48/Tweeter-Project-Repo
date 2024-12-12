@@ -10,25 +10,42 @@ import {
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DataPage, StatusDto } from "tweeter-shared";
 import { IStatusDAO } from "../IStatusDAO";
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
+
+let sqsClient = new SQSClient();
 
 export class StatusDAODynamo implements IStatusDAO {
   readonly tableName = "story";
   readonly senderAliasAttr = "sender_alias";
   readonly timestampAttr = "timestamp";
   readonly postAttr = "post";
-  readonly segmentsAttr = "segments";
+  readonly postQ_url = "https://sqs.us-west-2.amazonaws.com/058264417880/PostQ";
 
   private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
   async putStatus(status: StatusDto): Promise<void> {
     console.log("in putStatus");
-    const params = {
+    const putParams = {
       TableName: this.tableName,
       Item: this.generateStatusItem(status),
       ConsistentRead: true,
     };
-    await this.client.send(new PutCommand(params));
+
+    const SQSparams = {
+      DelaySeconds: 0,
+      MessageBody: JSON.stringify(status),
+      QueueUrl: this.postQ_url,
+    };
+
+    await this.client.send(new PutCommand(putParams));
     console.log("putStatus done");
+
+    try {
+      const data = await sqsClient.send(new SendMessageCommand(SQSparams));
+      console.log("Success, message sent. MessageID:", data.MessageId);
+    } catch (err) {
+      throw err;
+    }
   }
 
   async deleteStatus(status: StatusDto): Promise<void> {
@@ -117,7 +134,6 @@ export class StatusDAODynamo implements IStatusDAO {
         },
         timestamp: new Date(item[this.timestampAttr]).getTime(),
         post: item[this.postAttr],
-        segments: item[this.segmentsAttr],
       })) || [];
 
     const hasMorePages = data.LastEvaluatedKey !== undefined;
@@ -130,7 +146,6 @@ export class StatusDAODynamo implements IStatusDAO {
       [this.senderAliasAttr]: status.user.alias,
       [this.timestampAttr]: new Date(status.timestamp).toISOString(),
       [this.postAttr]: status.post,
-      [this.segmentsAttr]: status.segments,
     };
   }
 
@@ -151,7 +166,6 @@ export class StatusDAODynamo implements IStatusDAO {
       },
       timestamp: new Date(item[this.timestampAttr]).getTime(),
       post: item[this.postAttr],
-      segments: item[this.segmentsAttr],
     };
   }
 }

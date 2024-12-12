@@ -72,29 +72,30 @@ export class StatusService {
   }
 
   public async postStatus(token: string, newStatus: StatusDto): Promise<void> {
-    console.log("Posting status", newStatus);
-    console.log("Verifying token", token);
     const verify = await this.authDAO.validateToken(token, 5);
 
     if (!verify) {
       throw new Error("Invalid token");
     }
 
-    const followers = await this.followDao.getFollowersAliases(
-      newStatus.user.alias
-    );
-
-    console.log("Token verified");
-    console.log("Putting status", newStatus);
     if (newStatus) {
       await this.statusDAO.putStatus(newStatus);
-      await this.feedDAO.putFeed(newStatus, followers);
     } else {
       throw new Error("newStatus cannot be null");
     }
     console.log("Status put");
+  }
 
-    // TODO: Call the server to post the status
+  public async postFeedStatus(
+    token: string,
+    newStatus: StatusDto,
+    followers: string[]
+  ): Promise<void> {
+    if (newStatus) {
+      await this.feedDAO.putFeed(newStatus, followers);
+    } else {
+      throw new Error("newStatus cannot be null");
+    }
   }
 
   private async populateUsers(values: StatusDto[]): Promise<StatusDto[]> {
